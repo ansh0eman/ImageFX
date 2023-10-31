@@ -2,7 +2,7 @@
 
 OOP Lab Project
 
-## contributors
+## Contributors
 1. Rohan Khandelwal 220905143
 2. Ishaan Vatus 220905043
 3. Anshuman 220905087
