@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.SepiaTone;
 import javafx.scene.effect.GaussianBlur;
 import javafx.stage.Stage;
 
@@ -14,7 +15,7 @@ public class ImageFilterApp extends Application {
     private ImageView imageView;
 
     public void start(Stage primaryStage) {
-        originalImage = new Image("file:example.jpg"); // Replace "example.jpg" with your image file
+        originalImage = new Image("https://images.unsplash.com/photo-1698527692282-fc5d8ab13771?auto=format&fit=crop&q=80&w=1887&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"); // Replace "example.jpg" with your image file
 
         imageView = new ImageView(originalImage);
 
@@ -27,7 +28,7 @@ public class ImageFilterApp extends Application {
         root.setStyle("-fx-padding: 10px");
 
         Scene scene = new Scene(root);
-        primaryStage.setTitle("Image Filter App");
+        primaryStage.setTitle("Image Filters App");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -57,9 +58,9 @@ public class ImageFilterApp extends Application {
     }
 
     private void setSepiaFilter() {
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setSepiaTone(1);
-        imageView.setEffect(colorAdjust);
+        SepiaTone sepiaTone = new SepiaTone();
+        sepiaTone.setLevel(0.8); // Adjust sepia intensity here
+        imageView.setEffect(sepiaTone);
     }
 
     private void setBlurFilter() {
