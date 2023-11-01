@@ -5,20 +5,21 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import java.io.File;
+
 
 import features.ImageCompression;
 import features.ImageFilter;
 import features.ImageResizer;
 
-public class ImageProcessingApp extends Application {
+public class test extends Application {
 
+    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Image Processing App");
-
+        
         // Load an initial image
-        File initialFile = new File("https://images.unsplash.com/photo-1682685797406-97f364419b4a?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-        Image image = new Image(initialFile.toURI().toString());
+        String imageUrl = "https://images.unsplash.com/photo-1682685797406-97f364419b4a?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+        Image image = new Image(imageUrl);
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(400);
