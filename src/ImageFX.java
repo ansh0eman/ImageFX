@@ -6,11 +6,16 @@ import javafx.stage.Window;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.File;
 
-public class ImageFX extends Application {
+public class ImageFX extends Application
+{
     private ImageView imageView = new ImageView();
 
     public static void main(String[] args) {
@@ -25,7 +30,17 @@ public class ImageFX extends Application {
         Button loadImageButton = new Button("Load Image");
         loadImageButton.setOnAction(e -> loadAndDisplayImage(primaryStage));
 
-        root.getChildren().addAll(loadImageButton, imageView);
+        imageView.setFitWidth(300); // Width in pixels
+        imageView.setFitHeight(200); // Height in pixels
+        imageView.setPreserveRatio(true);
+
+        ComboBox<String> filterComboBox = new ComboBox<>();
+        filterComboBox.getItems().addAll("Original", "Grayscale", "Sepia", "Blur");
+        filterComboBox.setValue("Original");
+        filterComboBox.setOnAction(e -> applyFilter(filterComboBox.getValue()));
+
+
+        root.getChildren().addAll(loadImageButton, imageView, filterComboBox);
 
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
@@ -43,5 +58,44 @@ public class ImageFX extends Application {
             Image selectedImage = new Image(imagePath);
             imageView.setImage(selectedImage);
         }
+    }
+
+    private void applyFilter(String filter) {
+        switch (filter) {
+            case "Grayscale":
+                setGrayscaleFilter();
+                break;
+            case "Sepia":
+                setSepiaFilter();
+                break;
+            case "Blur":
+                setBlurFilter();
+                break;
+            case "Original":
+            default:
+                clearFilters();
+                break;
+        }
+    }
+
+    private void setGrayscaleFilter() {
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setSaturation(-1);
+        imageView.setEffect(colorAdjust);
+    }
+
+    private void setSepiaFilter() {
+        SepiaTone sepiaTone = new SepiaTone();
+        sepiaTone.setLevel(0.8); // Adjust sepia intensity here
+        imageView.setEffect(sepiaTone);
+    }
+
+    private void setBlurFilter() {
+        GaussianBlur blur = new GaussianBlur(10);
+        imageView.setEffect(blur);
+    }
+
+    private void clearFilters() {
+        imageView.setEffect(null);
     }
 }
