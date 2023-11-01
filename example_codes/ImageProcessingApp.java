@@ -17,8 +17,12 @@ public class ImageProcessingApp extends Application {
         primaryStage.setTitle("Image Processing App");
 
         // Load an initial image
-        File initialFile = new File("https://images.unsplash.com/photo-1682685797406-97f364419b4a?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-        Image image = new Image(initialFile.toURI().toString());
+        // File initialFile = new File("https://images.unsplash.com/photo-1682685797406-97f364419b4a?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        // Image image = new Image(initialFile.toURI().toString());
+
+        originalImage = new Image("https://images.unsplash.com/photo-1698527692282-fc5d8ab13771?auto=format&fit=crop&q=80&w=1887&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"); // Replace "example.jpg" with your image file
+
+        imageView = new ImageView(originalImage);
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(400);

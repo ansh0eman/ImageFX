@@ -10,13 +10,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.File;
 
-public class ImageFX extends Application {
+public class loadfromfile extends Application {
     private ImageView imageView = new ImageView();
 
     public static void main(String[] args) {
         launch(args);
     }
 
+    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Image Processing App");
 
