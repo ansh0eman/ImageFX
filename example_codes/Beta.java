@@ -11,7 +11,7 @@ import features.ImageCompression;
 import features.ImageFilter;
 import features.ImageResizer;
 
-public class test extends Application {
+public class Beta extends Application {
 
     @Override
     public void start(Stage primaryStage) {
