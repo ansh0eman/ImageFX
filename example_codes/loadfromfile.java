@@ -17,7 +17,6 @@ public class loadfromfile extends Application {
         launch(args);
     }
 
-    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Image Processing App");
 
@@ -28,7 +27,7 @@ public class loadfromfile extends Application {
 
         root.getChildren().addAll(loadImageButton, imageView);
 
-        Scene scene = new Scene(root, 400, 300);
+        Scene scene = new Scene(root, 1000, 800);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -42,6 +41,9 @@ public class loadfromfile extends Application {
         if (selectedFile != null) {
             String imagePath = selectedFile.toURI().toString();
             Image selectedImage = new Image(imagePath);
+            imageView.setFitWidth(500);
+            imageView.setFitHeight(500);
+            imageView.setPreserveRatio(true);
             imageView.setImage(selectedImage);
         }
     }
