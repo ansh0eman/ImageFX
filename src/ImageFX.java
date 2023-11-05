@@ -81,7 +81,7 @@ public class ImageFX extends Application
 
         root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton, qualitySlider, saveImageButton);
 
-        Scene scene = new Scene(root, 400, 300);
+        Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -246,5 +246,3 @@ public class ImageFX extends Application
         }
     }
 }
-
-
