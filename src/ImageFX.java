@@ -79,7 +79,7 @@ public class ImageFX extends Application
         Button saveImageButton = new Button("Save Image");
         saveImageButton.setOnAction(e -> saveImage(primaryStage, qualitySlider));
 
-        root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton, saveImageButton);
+        root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton, qualitySlider, saveImageButton);
 
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
