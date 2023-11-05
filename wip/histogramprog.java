@@ -125,7 +125,7 @@ public class histogramprog extends Application
         {
             for(int j: i)
             {
-                System.out.println(j);
+             //   System.out.println(j);
             }
         }
         CategoryAxis categoryAxis = new CategoryAxis(); // X-axis for categories
