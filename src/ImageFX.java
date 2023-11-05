@@ -98,7 +98,7 @@ public class ImageFX extends Application
         if (selectedFile != null) {
             String imagePath = selectedFile.toURI().toString();
             selectedImage = new Image(imagePath);
-            resized = new Image(imagePath);
+            resized = new Image(imagePath)
             imageView.setImage(selectedImage);
             imageView1.setImage(resized);
         }
