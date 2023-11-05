@@ -23,6 +23,22 @@ import javafx.scene.chart.XYChart;
 
 import java.io.File;
 
+import javafx.scene.image.WritableImage;
+import javafx.embed.swing.SwingFXUtils;
+
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.util.Iterator;
+
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.IIOImage;
+import javax.imageio.stream.FileImageOutputStream;
+
+import javafx.scene.control.Slider;
+
 public class histogramprog extends Application
 {
     private ImageView imageView = new ImageView();
@@ -44,6 +60,13 @@ public class histogramprog extends Application
         imageView.setFitHeight(200); // Height in pixels
         imageView.setPreserveRatio(true);
 
+        Slider qualitySlider = new Slider(0, 1, 0.7);
+        qualitySlider.setBlockIncrement(0.1);
+        qualitySlider.setShowTickLabels(true);
+        qualitySlider.setShowTickMarks(true);
+        qualitySlider.setMajorTickUnit(0.1);
+        qualitySlider.setMinorTickCount(0);
+
         ComboBox<String> filterComboBox = new ComboBox<>();
         filterComboBox.getItems().addAll("Original", "Grayscale", "Sepia", "Blur");
         filterComboBox.setValue("Original");
@@ -52,7 +75,11 @@ public class histogramprog extends Application
         Button histoButton = new Button("Histogram");
         histoButton.setOnAction(e -> histogram(selectedImage));
 
-        root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton);
+
+        Button saveImageButton = new Button("Save Image");
+        saveImageButton.setOnAction(e -> saveImage(primaryStage, qualitySlider));
+
+        root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton, saveImageButton);
 
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
@@ -121,13 +148,6 @@ public class histogramprog extends Application
             }
         }
 
-        for(int i[]: histogram_data)
-        {
-            for(int j: i)
-            {
-                System.out.println(j);
-            }
-        }
         CategoryAxis categoryAxis = new CategoryAxis(); // X-axis for categories
         NumberAxis valueAxis = new NumberAxis(); // Y-axis for values
         BarChart<String, Number> histogramChart = new BarChart<>(categoryAxis, valueAxis);
@@ -151,15 +171,6 @@ public class histogramprog extends Application
         blueSeries.setName("Blue Channel");
 
         histogramChart.getData().addAll(redSeries, greenSeries, blueSeries);
-
-        // XYChart.Series<String, Number> redSeries = new XYChart.Series<>();
-        // redSeries.setName("Histogram");
-
-        // for (int i = 0; i < 256; i++) {
-        //     redSeries.getData().add(new XYChart.Data<>(String.valueOf(i), histogram_data[0][i]));
-        // }
-
-        // histogramChart.getData().add(redSeries);
 
 
         Stage histogramStage = new Stage();
@@ -189,5 +200,51 @@ public class histogramprog extends Application
     private void clearFilters() {
         imageView.setEffect(null);
     }
+
+
+    private void saveImage(Window ownerWindow, Slider qualitySlider) {
+        if (selectedImage != null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new ExtensionFilter("PNG Files", "*.png"));
+
+            File selectedFile = fileChooser.showSaveDialog((Stage) ownerWindow);
+
+            if (selectedFile != null) {
+                try {
+                    int width = (int) selectedImage.getWidth();
+                    int height = (int) selectedImage.getHeight();
+
+                    WritableImage writableImage = new WritableImage(width, height);
+                    imageView.snapshot(null, writableImage);
+
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
+
+                    Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
+                    if (writers.hasNext()) {
+                        ImageWriter writer = writers.next();
+                        ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+
+                        double compressionQuality = qualitySlider.getValue();
+                        writeParam.setCompressionQuality((float) compressionQuality);
+
+                        FileImageOutputStream output = new FileImageOutputStream(selectedFile);
+                        writer.setOutput(output);
+                        writer.write(null, new IIOImage(bufferedImage, null, null), writeParam);
+                        writer.dispose();
+
+                        System.out.println("Image saved to: " + selectedFile.getAbsolutePath());
+                    } else {
+                        System.out.println("No suitable image writer found.");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("No image to save.");
+            }
+        }
+    }
 }
+
 
