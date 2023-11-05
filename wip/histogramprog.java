@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.effect.ColorAdjust;
@@ -12,11 +13,20 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+
+//Importing modules for Charts
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+
 import java.io.File;
 
 public class histogramprog extends Application
 {
     private ImageView imageView = new ImageView();
+    private Image selectedImage;
 
     public static void main(String[] args) {
         launch(args);
@@ -39,8 +49,10 @@ public class histogramprog extends Application
         filterComboBox.setValue("Original");
         filterComboBox.setOnAction(e -> applyFilter(filterComboBox.getValue()));
 
+        Button histoButton = new Button("Histogram");
+        histoButton.setOnAction(e -> histogram(selectedImage));
 
-        root.getChildren().addAll(loadImageButton, imageView, filterComboBox);
+        root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton);
 
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
@@ -55,7 +67,7 @@ public class histogramprog extends Application
 
         if (selectedFile != null) {
             String imagePath = selectedFile.toURI().toString();
-            Image selectedImage = new Image(imagePath);
+            selectedImage = new Image(imagePath);
             imageView.setImage(selectedImage);
         }
     }
@@ -78,6 +90,85 @@ public class histogramprog extends Application
         }
     }
 
+    private void histogram(Image img)
+    {
+        int[][] histogram_data = new int[3][256];
+
+        for(int i[]: histogram_data)
+        {
+            for(int j: i)
+            {
+                j = 0;
+            }
+        }
+        
+        PixelReader pixelReader = img.getPixelReader();
+        int width = (int) img.getWidth();
+        int height = (int) img.getHeight();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++)
+            {
+
+                int pixel = pixelReader.getArgb(x, y);
+                int red = (pixel >> 16) & 0xFF;
+                int green = (pixel >> 8) & 0xFF;
+                int blue = pixel & 0xFF;
+
+                histogram_data[0][red]++;
+                histogram_data[1][green]++;
+                histogram_data[2][blue]++;
+            }
+        }
+
+        for(int i[]: histogram_data)
+        {
+            for(int j: i)
+            {
+                System.out.println(j);
+            }
+        }
+        CategoryAxis categoryAxis = new CategoryAxis(); // X-axis for categories
+        NumberAxis valueAxis = new NumberAxis(); // Y-axis for values
+        BarChart<String, Number> histogramChart = new BarChart<>(categoryAxis, valueAxis);
+        histogramChart.setTitle("Histogram");
+        categoryAxis.setLabel("Intensity Level");
+        valueAxis.setLabel("Frequency");
+
+        XYChart.Series<String, Number> redSeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> greenSeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> blueSeries = new XYChart.Series<>();
+
+        for (int i = 0; i < 256; i++)
+        {
+            redSeries.getData().add(new XYChart.Data<>(Integer.toString(i), histogram_data[0][i]));
+            greenSeries.getData().add(new XYChart.Data<>(Integer.toString(i), histogram_data[1][i]));
+            blueSeries.getData().add(new XYChart.Data<>(Integer.toString(i), histogram_data[2][i]));
+        }
+
+        redSeries.setName("Red Channel");
+        greenSeries.setName("Green Channel");
+        blueSeries.setName("Blue Channel");
+
+        histogramChart.getData().addAll(redSeries, greenSeries, blueSeries);
+
+        // XYChart.Series<String, Number> redSeries = new XYChart.Series<>();
+        // redSeries.setName("Histogram");
+
+        // for (int i = 0; i < 256; i++) {
+        //     redSeries.getData().add(new XYChart.Data<>(String.valueOf(i), histogram_data[0][i]));
+        // }
+
+        // histogramChart.getData().add(redSeries);
+
+
+        Stage histogramStage = new Stage();
+        histogramStage.setTitle("Histogram");
+        histogramStage.setScene(new Scene(histogramChart, 600, 400));
+        histogramStage.show();
+    }
+
+
     private void setGrayscaleFilter() {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setSaturation(-1);
@@ -99,3 +190,4 @@ public class histogramprog extends Application
         imageView.setEffect(null);
     }
 }
+
