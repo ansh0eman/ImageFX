@@ -42,7 +42,10 @@ import javafx.scene.control.Slider;
 public class ImageFX extends Application
 {
     private ImageView imageView = new ImageView();
-    private Image selectedImage;
+    private ImageView imageView1 = new ImageView();
+
+    private Image selectedImage = null;
+    private Image resized;
 
     public static void main(String[] args) {
         launch(args);
@@ -56,9 +59,9 @@ public class ImageFX extends Application
         Button loadImageButton = new Button("Load Image");
         loadImageButton.setOnAction(e -> loadAndDisplayImage(primaryStage));
 
-        imageView.setFitWidth(300); // Width in pixels
-        imageView.setFitHeight(200); // Height in pixels
-        imageView.setPreserveRatio(true);
+        imageView1.setFitWidth(300); // Width in pixels
+        imageView1.setFitHeight(200); // Height in pixels
+        imageView1.setPreserveRatio(true);
 
         Slider qualitySlider = new Slider(0, 1, 0.7);
         qualitySlider.setBlockIncrement(0.1);
@@ -79,7 +82,7 @@ public class ImageFX extends Application
         Button saveImageButton = new Button("Save Image");
         saveImageButton.setOnAction(e -> saveImage(primaryStage, qualitySlider));
 
-        root.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton, qualitySlider, saveImageButton);
+        root.getChildren().addAll(loadImageButton, imageView1, filterComboBox, histoButton, qualitySlider, saveImageButton);
 
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
@@ -95,7 +98,9 @@ public class ImageFX extends Application
         if (selectedFile != null) {
             String imagePath = selectedFile.toURI().toString();
             selectedImage = new Image(imagePath);
+            resized = new Image(imagePath);
             imageView.setImage(selectedImage);
+            imageView1.setImage(resized);
         }
     }
 
@@ -184,21 +189,27 @@ public class ImageFX extends Application
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setSaturation(-1);
         imageView.setEffect(colorAdjust);
+        imageView1.setEffect(colorAdjust);
     }
 
     private void setSepiaFilter() {
         SepiaTone sepiaTone = new SepiaTone();
         sepiaTone.setLevel(0.8); // Adjust sepia intensity here
         imageView.setEffect(sepiaTone);
+        imageView1.setEffect(sepiaTone);
+
     }
 
     private void setBlurFilter() {
         GaussianBlur blur = new GaussianBlur(10);
         imageView.setEffect(blur);
+        imageView1.setEffect(blur);
+
     }
 
     private void clearFilters() {
         imageView.setEffect(null);
+        imageView1.setEffect(null);
     }
 
 
