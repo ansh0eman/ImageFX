@@ -4,8 +4,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.effect.ColorAdjust;
@@ -14,6 +16,8 @@ import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.control.Slider;
+import javafx.geometry.Pos;
 
 //Importing modules for Charts
 import javafx.scene.chart.BarChart;
@@ -26,7 +30,6 @@ import java.io.File;
 import javafx.scene.image.WritableImage;
 import javafx.embed.swing.SwingFXUtils;
 
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -37,32 +40,37 @@ import javax.imageio.ImageWriter;
 import javax.imageio.IIOImage;
 import javax.imageio.stream.FileImageOutputStream;
 
-import javafx.scene.control.Slider;
-
-public class ImageFX extends Application
-{
+public class TEST2 extends Application {
     private ImageView imageView = new ImageView();
-    private ImageView imageView1 = new ImageView();
-
     private Image selectedImage = null;
-    private Image resized;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Image Processing App");
+        primaryStage.setTitle("ImageFX");
 
-        VBox root = new VBox(10);
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color:#e5e5e5;"); // Red to Blue gradient
+        
+        VBox vbox = new VBox();
+        VBox leftBox = new VBox(10);
+
+        Label title = new Label("ImageFX");
+        title.setStyle("-fx-text-fill: linear-gradient(to left, #FF0000, #0000FF);-fx-font-family: \"Times New Roman\";-fx-font-size: 40px; -fx-font-weight: bold; ");
+        // title.setStyle("");
+        HBox titleBox = new HBox(title);
+        titleBox.setAlignment(Pos.CENTER);
+        titleBox.setMinHeight(50);
 
         Button loadImageButton = new Button("Load Image");
-        loadImageButton.setStyle("-fx-background-color: gray; -fx-background-radius: 20; -fx-font-size: 16; -fx-text-fill: white; -fx-border-color: gray; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 0, 0, 0, 1);");
         loadImageButton.setOnAction(e -> loadAndDisplayImage(primaryStage));
+        loadImageButton.setStyle("-fx-background-radius: 30; -fx-font-size: 16;");
 
-        imageView1.setFitWidth(300); // Width in pixels
-        imageView1.setFitHeight(200); // Height in pixels
-        imageView1.setPreserveRatio(true);
+        imageView.setFitWidth(500);
+        imageView.setFitHeight(375);
+        imageView.setPreserveRatio(true);
 
         Slider qualitySlider = new Slider(0, 1, 0.7);
         qualitySlider.setBlockIncrement(0.1);
@@ -75,17 +83,24 @@ public class ImageFX extends Application
         filterComboBox.getItems().addAll("Original", "Grayscale", "Sepia", "Blur");
         filterComboBox.setValue("Original");
         filterComboBox.setOnAction(e -> applyFilter(filterComboBox.getValue()));
+        filterComboBox.setStyle("-fx-background-radius: 30; -fx-font-size: 16;");
+
 
         Button histoButton = new Button("Histogram");
         histoButton.setOnAction(e -> histogram(selectedImage));
-
+        histoButton.setStyle("-fx-background-radius: 30; -fx-font-size: 16;");
 
         Button saveImageButton = new Button("Save Image");
         saveImageButton.setOnAction(e -> saveImage(primaryStage, qualitySlider));
+        saveImageButton.setStyle("-fx-background-radius: 30; -fx-font-size: 16;");
 
-        root.getChildren().addAll(loadImageButton, imageView1, filterComboBox, histoButton, qualitySlider, saveImageButton);
+        leftBox.getChildren().addAll(loadImageButton, imageView, filterComboBox, histoButton, qualitySlider, saveImageButton);
+        leftBox.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(root, 800, 600);
+        vbox.getChildren().addAll(titleBox, leftBox);
+        root.setCenter(vbox);
+
+        Scene scene = new Scene(root, 800, 660);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -99,9 +114,7 @@ public class ImageFX extends Application
         if (selectedFile != null) {
             String imagePath = selectedFile.toURI().toString();
             selectedImage = new Image(imagePath);
-            resized = new Image(imagePath);
             imageView.setImage(selectedImage);
-            imageView1.setImage(resized);
         }
     }
 
@@ -123,26 +136,21 @@ public class ImageFX extends Application
         }
     }
 
-    private void histogram(Image img)
-    {
+    private void histogram(Image img) {
         int[][] histogram_data = new int[3][256];
 
-        for(int i[]: histogram_data)
-        {
-            for(int j: i)
-            {
-                j = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 256; j++) {
+                histogram_data[i][j] = 0;
             }
         }
-        
+
         PixelReader pixelReader = img.getPixelReader();
         int width = (int) img.getWidth();
         int height = (int) img.getHeight();
 
         for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++)
-            {
-
+            for (int y = 0; y < height; y++) {
                 int pixel = pixelReader.getArgb(x, y);
                 int red = (pixel >> 16) & 0xFF;
                 int green = (pixel >> 8) & 0xFF;
@@ -154,8 +162,8 @@ public class ImageFX extends Application
             }
         }
 
-        CategoryAxis categoryAxis = new CategoryAxis(); // X-axis for categories
-        NumberAxis valueAxis = new NumberAxis(); // Y-axis for values
+        CategoryAxis categoryAxis = new CategoryAxis();
+        NumberAxis valueAxis = new NumberAxis();
         BarChart<String, Number> histogramChart = new BarChart<>(categoryAxis, valueAxis);
         histogramChart.setTitle("Histogram");
         categoryAxis.setLabel("Intensity Level");
@@ -165,8 +173,7 @@ public class ImageFX extends Application
         XYChart.Series<String, Number> greenSeries = new XYChart.Series<>();
         XYChart.Series<String, Number> blueSeries = new XYChart.Series<>();
 
-        for (int i = 0; i < 256; i++)
-        {
+        for (int i = 0; i < 256; i++) {
             redSeries.getData().add(new XYChart.Data<>(Integer.toString(i), histogram_data[0][i]));
             greenSeries.getData().add(new XYChart.Data<>(Integer.toString(i), histogram_data[1][i]));
             blueSeries.getData().add(new XYChart.Data<>(Integer.toString(i), histogram_data[2][i]));
@@ -178,41 +185,32 @@ public class ImageFX extends Application
 
         histogramChart.getData().addAll(redSeries, greenSeries, blueSeries);
 
-
         Stage histogramStage = new Stage();
         histogramStage.setTitle("Histogram");
         histogramStage.setScene(new Scene(histogramChart, 600, 400));
         histogramStage.show();
     }
 
-
     private void setGrayscaleFilter() {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setSaturation(-1);
         imageView.setEffect(colorAdjust);
-        imageView1.setEffect(colorAdjust);
     }
 
     private void setSepiaFilter() {
         SepiaTone sepiaTone = new SepiaTone();
         sepiaTone.setLevel(0.8); // Adjust sepia intensity here
         imageView.setEffect(sepiaTone);
-        imageView1.setEffect(sepiaTone);
-
     }
 
     private void setBlurFilter() {
         GaussianBlur blur = new GaussianBlur(10);
         imageView.setEffect(blur);
-        imageView1.setEffect(blur);
-
     }
 
     private void clearFilters() {
         imageView.setEffect(null);
-        imageView1.setEffect(null);
     }
-
 
     private void saveImage(Window ownerWindow, Slider qualitySlider) {
         if (selectedImage != null) {
